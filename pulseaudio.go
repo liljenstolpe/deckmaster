@@ -11,6 +11,7 @@ import (
 )
 
 type Source = pulse.GetSourceInfoReply
+type Sink = pulse.GetSinkInfoReply
 
 type PulseAudioClient struct {
 	client *pulse.Client
@@ -57,10 +58,30 @@ func (c *PulseAudioClient) DefaultSource() (*Source, error) {
 	return &source, nil
 }
 
+// DefaultSink returns the default sink.
+func (c *PulseAudioClient) DefaultSink() (*Sink, error) {
+	var sink Sink
+	err := c.client.Request(&proto.GetSinkInfo{SinkIndex: proto.Undefined}, &sink)
+	if err != nil {
+		return nil, err
+	}
+	return &sink, nil
+}
+
 // SetSourceMute set the mute state of a source.
 func (c *PulseAudioClient) SetSourceMute(source *Source, mute bool) error {
 	verbosef("Setting pulseaudio source %s mute to %t", source.SourceName, mute)
 	err := c.client.Request(&proto.SetSourceMute{SourceIndex: source.SourceIndex, Mute: mute}, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetSinkMute set the mute state of a sink.
+func (c *PulseAudioClient) SetSinkMute(sink *Sink, mute bool) error {
+	verbosef("Setting pulseaudio sink %s mute to %t", sink.SinkName, mute)
+	err := c.client.Request(&proto.SetSinkMute{SinkIndex: sink.SinkIndex, Mute: mute}, nil)
 	if err != nil {
 		return err
 	}

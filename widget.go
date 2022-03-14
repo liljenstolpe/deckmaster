@@ -132,8 +132,14 @@ func NewWidget(dev *streamdeck.Device, base string, kc KeyConfig, bg image.Image
 	case "weather":
 		return NewWeatherWidget(bw, kc.Widget)
 
-	case "mute":
+	case "mic":
 		return NewMicrophoneMuteWidget(bw, kc.Widget)
+
+	case "sink":
+		return NewSinkMuteWidget(bw, kc.Widget)
+
+//	case "keyLight":
+//		return NewKeyLightWidget(bw, kc.Widget)
 	}
 
 	// unknown widget ID
